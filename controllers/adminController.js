@@ -80,7 +80,7 @@ const product_new_get = async (req, res, next) => {
 
 const product_create_post = async (req, res, next) => {
     try {
-        const { name, description, price, category, stock } = req.body;
+        const { name, description, price, category, stock, imageUrl } = req.body;
 
         if (!name || !description || !price || !category || stock === undefined) {
             req.session.errorMessage = 'Please provide all required product fields.';
@@ -88,11 +88,15 @@ const product_create_post = async (req, res, next) => {
         }
 
         const imagePaths = [];
-        if (req.file) {
+        const cleanImageUrl = imageUrl ? imageUrl.trim() : '';
+
+        if (cleanImageUrl) {
+            imagePaths.push(cleanImageUrl);
+        } else if (req.file) {
             imagePaths.push(`/uploads/${req.file.filename}`);
         } else {
-            // Default placeholder if no image uploaded
-            imagePaths.push('https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80');
+            // Default placeholder if no image URL or file provided
+            imagePaths.push('https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80');
         }
 
         await Product.create({
@@ -137,7 +141,7 @@ const product_edit_get = async (req, res, next) => {
 const product_update_post = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { name, description, price, category, stock } = req.body;
+        const { name, description, price, category, stock, imageUrl } = req.body;
 
         if (!isValidObjectId(id)) return res.redirect('/admin/products');
 
@@ -149,7 +153,10 @@ const product_update_post = async (req, res, next) => {
             stock: parseInt(stock)
         };
 
-        if (req.file) {
+        const cleanImageUrl = imageUrl ? imageUrl.trim() : '';
+        if (cleanImageUrl) {
+            updateData.images = [cleanImageUrl];
+        } else if (req.file) {
             updateData.images = [`/uploads/${req.file.filename}`];
         }
 
