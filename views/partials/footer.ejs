@@ -1,0 +1,39 @@
+<footer class="footer" id="main-footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>ModernShop</h4>
+                <p style="color: var(--gray-400); font-size: 0.9rem; margin-top: 8px;">
+                    A production-minded, clean architecture e-commerce platform built with Node.js, Express, MongoDB Atlas, and EJS.
+                </p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop Categories</h4>
+                <ul class="footer-links">
+                    <li><a href="/products">All Products</a></li>
+                    <li><a href="/products?sort=rating">Top Rated</a></li>
+                    <li><a href="/products?sort=newest">New Arrivals</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Customer Account</h4>
+                <ul class="footer-links">
+                    <li><a href="/cart">Shopping Cart</a></li>
+                    <li><a href="/orders">Track Orders</a></li>
+                    <li><a href="/user/profile">My Profile</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Security & Architecture</h4>
+                <ul class="footer-links">
+                    <li><span style="font-size: 0.85rem; color: #10b981;">● MongoDB Atlas Connected</span></li>
+                    <li><span style="font-size: 0.85rem; color: #3b82f6;">● Session Encrypted</span></li>
+                    <li><span style="font-size: 0.85rem; color: #f59e0b;">● Role Authorization</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <%= new Date().getFullYear() %> ModernShop E-Commerce. Developed for Portfolio & Production Architecture.</p>
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,175 @@
+<nav class="navbar" id="main-navbar">
+    <div class="container nav-container">
+        <!-- Brand Logo -->
+        <a href="/" class="nav-brand" id="brand-logo">
+            <span>Modern</span>Shop
+            <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+                <span class="badge-admin-tag" id="brand-admin-tag">ADMIN</span>
+            <% } %>
+        </a>
+
+        <!-- Search Bar -->
+        <div class="nav-search">
+            <form action="/products/search" method="GET" class="search-form" id="global-search-form">
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="search-input" 
+                    placeholder="Search products, categories..." 
+                    id="search-query-input"
+                    value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+                    required
+                />
+                <button type="submit" class="search-btn" id="search-submit-btn" aria-label="Search">
+                    🔍
+                </button>
+            </form>
+        </div>
+
+        <!-- Navigation Links -->
+        <ul class="nav-menu" id="nav-links">
+            <li><a href="/" class="nav-link" id="nav-home">Home</a></li>
+            <li><a href="/products" class="nav-link" id="nav-products">Products</a></li>
+
+            <!-- Cart Link with Dynamic Badge -->
+            <li>
+                <a href="/cart" class="nav-link nav-badge-link" id="nav-cart">
+                    <span>🛒 Cart</span>
+                    <% if (typeof cartCount !== 'undefined' && cartCount > 0) { %>
+                        <span class="badge-count" id="cart-badge-count"><%= cartCount %></span>
+                    <% } %>
+                </a>
+            </li>
+
+            <% if (typeof user !== 'undefined' && user) { %>
+                <% if (user.role === 'admin') { %>
+                    <!-- ================= ADMIN LOGGED IN ================= -->
+                    <li class="nav-dropdown" id="nav-admin-dropdown">
+                        <button type="button" class="nav-admin-btn nav-link" id="nav-admin-menu-toggle" aria-haspopup="true" aria-expanded="false" style="cursor: pointer; border: 1px solid #ffedd5;">
+                            ⚙️ Admin Portal ▾
+                        </button>
+                        <div class="nav-dropdown-menu" id="admin-menu-items">
+                            <a href="/admin" class="nav-dropdown-item" id="admin-menu-dashboard">📊 Dashboard</a>
+                            <a href="/admin/products" class="nav-dropdown-item" id="admin-menu-products">📦 Manage Products</a>
+                            <a href="/admin/products/new" class="nav-dropdown-item" id="admin-menu-add-product">➕ Add Product</a>
+                            <a href="/admin/categories" class="nav-dropdown-item" id="admin-menu-categories">📁 Manage Categories</a>
+                            <a href="/admin/categories/new" class="nav-dropdown-item" id="admin-menu-add-category">➕ Add Category</a>
+                            <a href="/admin/orders" class="nav-dropdown-item" id="admin-menu-orders">📑 Customer Orders</a>
+                            <a href="/admin/users" class="nav-dropdown-item" id="admin-menu-users">👥 Registered Users</a>
+                        </div>
+                    </li>
+
+                    <li class="nav-dropdown" id="nav-user-dropdown">
+                        <div class="nav-user-pill" id="admin-user-pill" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="Admin Profile Menu">
+                            <span class="nav-user-avatar nav-admin-avatar">👑</span>
+                            <span><%= user.name.split(' ')[0] %></span>
+                            <span style="font-size: 0.75rem; margin-left: 2px;">▾</span>
+                        </div>
+                        <div class="nav-dropdown-menu" id="user-menu-items">
+                            <a href="/user/profile" class="nav-dropdown-item" id="admin-menu-profile">👤 Profile Settings</a>
+                            <a href="/orders" class="nav-dropdown-item" id="admin-menu-personal-orders">🛍️ Personal Orders</a>
+                            <div class="nav-dropdown-divider"></div>
+                            <form action="/auth/logout" method="POST" style="margin: 0;" id="admin-logout-form">
+                                <button type="submit" class="nav-dropdown-item danger-item" style="border: none; background: none; font-family: inherit; font-size: 0.9rem;" id="admin-btn-logout">
+                                    🚪 Sign Out
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                <% } else { %>
+                    <!-- ================= CUSTOMER LOGGED IN ================= -->
+                    <li><a href="/orders" class="nav-link" id="nav-orders">📦 My Orders</a></li>
+
+                    <li class="nav-dropdown" id="nav-customer-dropdown">
+                        <div class="nav-user-pill" id="customer-user-pill" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" aria-label="User Profile Menu">
+                            <span class="nav-user-avatar"><%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %></span>
+                            <span><%= user.name.split(' ')[0] %></span>
+                            <span style="font-size: 0.75rem; margin-left: 2px;">▾</span>
+                        </div>
+                        <div class="nav-dropdown-menu" id="customer-menu-items">
+                            <a href="/user/profile" class="nav-dropdown-item" id="customer-menu-profile">👤 My Profile</a>
+                            <a href="/orders" class="nav-dropdown-item" id="customer-menu-orders">📦 Order History</a>
+                            <a href="/cart" class="nav-dropdown-item" id="customer-menu-cart">🛒 Shopping Cart</a>
+                            <div class="nav-dropdown-divider"></div>
+                            <form action="/auth/logout" method="POST" style="margin: 0;" id="customer-logout-form">
+                                <button type="submit" class="nav-dropdown-item danger-item" style="border: none; background: none; font-family: inherit; font-size: 0.9rem;" id="customer-btn-logout">
+                                    🚪 Sign Out
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                <% } %>
+            <% } else { %>
+                <!-- ================= GUEST NOT LOGGED IN ================= -->
+                <li><a href="/auth/login" class="nav-link" id="nav-login">Sign In</a></li>
+                <li><a href="/auth/register" class="btn btn-primary btn-sm" id="nav-register">Register</a></li>
+            <% } %>
+        </ul>
+    </div>
+</nav>
+
+<script>
+    (function() {
+        // Handle navbar dropdown click toggling & accessibility
+        const dropdowns = document.querySelectorAll('.nav-dropdown');
+        
+        dropdowns.forEach(dropdown => {
+            const toggle = dropdown.querySelector('.nav-user-pill, .nav-admin-btn, .nav-dropdown-toggle');
+            if (!toggle) return;
+
+            function toggleDropdown(e) {
+                e.stopPropagation();
+                const isOpen = dropdown.classList.contains('open');
+                
+                // Close all other open dropdowns first
+                dropdowns.forEach(d => {
+                    if (d !== dropdown) {
+                        d.classList.remove('open');
+                        const t = d.querySelector('.nav-user-pill, .nav-admin-btn, .nav-dropdown-toggle');
+                        if (t) t.setAttribute('aria-expanded', 'false');
+                    }
+                });
+
+                if (isOpen) {
+                    dropdown.classList.remove('open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                } else {
+                    dropdown.classList.add('open');
+                    toggle.setAttribute('aria-expanded', 'true');
+                }
+            }
+
+            toggle.addEventListener('click', toggleDropdown);
+            
+            // Keyboard accessibility (Enter or Space key on pills)
+            toggle.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleDropdown(e);
+                }
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            dropdowns.forEach(dropdown => {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.remove('open');
+                    const toggle = dropdown.querySelector('.nav-user-pill, .nav-admin-btn, .nav-dropdown-toggle');
+                    if (toggle) toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        });
+
+        // Close dropdown when pressing Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                dropdowns.forEach(dropdown => {
+                    dropdown.classList.remove('open');
+                    const toggle = dropdown.querySelector('.nav-user-pill, .nav-admin-btn, .nav-dropdown-toggle');
+                    if (toggle) toggle.setAttribute('aria-expanded', 'false');
+                });
+            }
+        });
+    })();
+</script>

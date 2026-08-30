@@ -1,0 +1,26 @@
+{
+  "name": "ecommerce-project",
+  "version": "1.0.0",
+  "description": "Production-minded E-commerce platform built with Node.js, Express, MongoDB Atlas, Mongoose, and EJS",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "node -e 'console.log(\"Build complete\")'",
+    "lint": "node -c server.js controllers/*.js models/*.js routes/*.js services/*.js utils/*.js config/*.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "connect-mongo": "^5.1.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
+    "helmet": "^8.0.0",
+    "mongoose": "^8.10.1",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1"
+  }
+}

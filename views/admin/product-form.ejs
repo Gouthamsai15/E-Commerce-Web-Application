@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
+    <link rel="stylesheet" href="/css/auth.css" />
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="flash-container">
+                <%- include('../partials/messages') %>
+            </div>
+
+            <div class="admin-layout">
+                <!-- Sidebar -->
+                <aside class="admin-sidebar">
+                    <ul class="admin-menu">
+                        <li class="admin-menu-item"><a href="/admin" class="admin-menu-link">📊 Dashboard</a></li>
+                        <li class="admin-menu-item"><a href="/admin/products" class="admin-menu-link active">📦 Products</a></li>
+                        <li class="admin-menu-item"><a href="/admin/categories" class="admin-menu-link">📁 Categories</a></li>
+                        <li class="admin-menu-item"><a href="/admin/orders" class="admin-menu-link">🛍️ Orders</a></li>
+                        <li class="admin-menu-item"><a href="/admin/users" class="admin-menu-link">👥 Users</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Content Form -->
+                <div class="admin-main">
+                    <div class="card" style="max-width: 800px;">
+                        <h1 style="font-size: 1.5rem; margin-bottom: 24px; border-bottom: 1px solid var(--gray-200); padding-bottom: 12px;">
+                            <%= isEdit ? 'Edit Product' : 'Create New Product' %>
+                        </h1>
+
+                        <form 
+                            action="<%= isEdit ? `/admin/products/${product._id}/update` : '/admin/products' %>" 
+                            method="POST" 
+                            enctype="multipart/form-data" 
+                            id="admin-product-form"
+                        >
+                            <div class="form-group">
+                                <label for="name" class="form-label">Product Name</label>
+                                <input 
+                                    type="text" 
+                                    id="name" 
+                                    name="name" 
+                                    class="form-control" 
+                                    value="<%= product.name || '' %>" 
+                                    placeholder="e.g. Wireless Noise-Cancelling Headphones"
+                                    required 
+                                />
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+                                <div class="form-group">
+                                    <label for="price" class="form-label">Price (₹ INR)</label>
+                                    <input 
+                                        type="number" 
+                                        id="price" 
+                                        name="price" 
+                                        step="0.01" 
+                                        min="0" 
+                                        class="form-control" 
+                                        value="<%= product.price !== undefined ? product.price : '' %>" 
+                                        placeholder="499.00"
+                                        required 
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="stock" class="form-label">Stock Quantity</label>
+                                    <input 
+                                        type="number" 
+                                        id="stock" 
+                                        name="stock" 
+                                        min="0" 
+                                        class="form-control" 
+                                        value="<%= product.stock !== undefined ? product.stock : 10 %>" 
+                                        required 
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="category" class="form-label">Category</label>
+                                    <select name="category" id="category" class="form-control" required>
+                                        <option value="">Select Category</option>
+                                        <% categories.forEach(cat => { %>
+                                            <option 
+                                                value="<%= cat._id %>"
+                                                <%= (product.category && (product.category._id || product.category).toString() === cat._id.toString()) ? 'selected' : '' %>
+                                            >
+                                                <%= cat.name %>
+                                            </option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description" class="form-label">Product Description</label>
+                                <textarea 
+                                    name="description" 
+                                    id="description" 
+                                    rows="5" 
+                                    class="form-control" 
+                                    placeholder="Detailed product specifications, key features..."
+                                    required
+                                ><%= product.description || '' %></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="image" class="form-label">Product Image (Upload JPG / PNG / WEBP - Max 5MB)</label>
+                                <input type="file" name="image" id="image" class="form-control" accept="image/png, image/jpeg, image/webp" />
+                                <% if (isEdit && product.images && product.images.length > 0) { %>
+                                    <div style="margin-top: 10px;">
+                                        <span style="font-size: 0.85rem; color: var(--gray-500);">Current Image:</span><br />
+                                        <img src="<%= product.images[0] %>" alt="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 6px; margin-top: 6px;" />
+                                    </div>
+                                <% } %>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 32px; border-top: 1px solid var(--gray-200); padding-top: 20px;">
+                                <a href="/admin/products" style="color: var(--gray-600);">&larr; Back to Products</a>
+                                <button type="submit" class="btn btn-primary" id="btn-save-product">
+                                    <%= isEdit ? 'Update Product' : 'Create Product' %>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/product.css" />
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="flash-container">
+                <%- include('../partials/messages') %>
+            </div>
+
+            <!-- Hero Banner -->
+            <div class="card" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff; padding: 48px; border-radius: var(--radius-lg); margin-bottom: 40px;">
+                <span style="background: #2563eb; color: #ffffff; font-size: 0.8rem; font-weight: 700; padding: 4px 12px; border-radius: 999px; text-transform: uppercase;">
+                    Production Node.js Architecture
+                </span>
+                <h1 style="color: #ffffff; font-size: 2.5rem; margin-top: 16px; margin-bottom: 12px;">
+                    Discover Premium Quality Products
+                </h1>
+                <p style="color: #94a3b8; font-size: 1.1rem; max-width: 600px; margin-bottom: 24px;">
+                    Experience seamless shopping powered by MongoDB Atlas, Express-Session, and server-side EJS rendering.
+                </p>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                    <a href="/products" class="btn btn-primary" id="hero-shop-all-btn">Shop All Products</a>
+                    <a href="/products?sort=rating" class="btn btn-secondary" id="hero-top-rated-btn">Top Rated</a>
+                </div>
+            </div>
+
+            <!-- Categories Bar -->
+            <% if (categories && categories.length > 0) { %>
+                <div style="margin-bottom: 36px;">
+                    <h2>Shop by Category</h2>
+                    <div style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;">
+                        <% categories.forEach(category => { %>
+                            <a 
+                                href="/products?category=<%= category.slug || category._id %>" 
+                                class="btn btn-secondary" 
+                                style="white-space: nowrap; border-radius: 999px;"
+                                id="cat-link-<%= category._id %>"
+                            >
+                                📁 <%= category.name %>
+                            </a>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Featured Products -->
+            <div style="margin-bottom: 48px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Featured Products</h2>
+                    <a href="/products" style="font-weight: 600;">View All &rarr;</a>
+                </div>
+
+                <% if (featuredProducts && featuredProducts.length > 0) { %>
+                    <div class="product-grid">
+                        <% featuredProducts.forEach(product => { %>
+                            <%- include('../partials/product-card', { product }) %>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <div class="card" style="text-align: center; padding: 48px;">
+                        <p style="color: var(--gray-500); margin-bottom: 16px;">No products available yet.</p>
+                        <a href="/admin/products/new" class="btn btn-primary">Add Products via Admin</a>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- New Arrivals -->
+            <% if (newArrivals && newArrivals.length > 0) { %>
+                <div style="margin-bottom: 48px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2>New Arrivals</h2>
+                        <a href="/products?sort=newest" style="font-weight: 600;">Explore &rarr;</a>
+                    </div>
+                    <div class="product-grid">
+                        <% newArrivals.forEach(product => { %>
+                            <%- include('../partials/product-card', { product }) %>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

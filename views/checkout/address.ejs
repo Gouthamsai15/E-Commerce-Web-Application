@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/auth.css" />
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="flash-container">
+                <%- include('../partials/messages') %>
+            </div>
+
+            <!-- Checkout Steps -->
+            <div style="display: flex; justify-content: center; gap: 24px; margin-bottom: 32px; font-weight: 600;">
+                <span style="color: var(--primary);">① Shipping Address</span>
+                <span style="color: var(--gray-400);">&rarr;</span>
+                <span style="color: var(--gray-400);">② Payment</span>
+                <span style="color: var(--gray-400);">&rarr;</span>
+                <span style="color: var(--gray-400);">③ Confirmation</span>
+            </div>
+
+            <div style="max-width: 680px; margin: 0 auto;">
+                <div class="card">
+                    <h1 style="font-size: 1.5rem; margin-bottom: 20px; border-bottom: 1px solid var(--gray-200); padding-bottom: 12px;">
+                        Shipping Address
+                    </h1>
+
+                    <form action="/checkout/address" method="POST" id="checkout-address-form">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label for="fullName" class="form-label">Full Name</label>
+                                <input 
+                                    type="text" 
+                                    id="fullName" 
+                                    name="fullName" 
+                                    class="form-control" 
+                                    value="<%= shippingAddress.fullName || '' %>" 
+                                    required 
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input 
+                                    type="text" 
+                                    id="phone" 
+                                    name="phone" 
+                                    class="form-control" 
+                                    value="<%= shippingAddress.phone || '' %>" 
+                                    required 
+                                />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="street" class="form-label">Street Address</label>
+                            <input 
+                                type="text" 
+                                id="street" 
+                                name="street" 
+                                class="form-control" 
+                                placeholder="123 Main St, Apt 4B" 
+                                value="<%= shippingAddress.street || '' %>" 
+                                required 
+                            />
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label for="city" class="form-label">City</label>
+                                <input 
+                                    type="text" 
+                                    id="city" 
+                                    name="city" 
+                                    class="form-control" 
+                                    value="<%= shippingAddress.city || '' %>" 
+                                    required 
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="state" class="form-label">State / Province</label>
+                                <input 
+                                    type="text" 
+                                    id="state" 
+                                    name="state" 
+                                    class="form-control" 
+                                    value="<%= shippingAddress.state || '' %>" 
+                                    required 
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="postalCode" class="form-label">Postal / Zip Code</label>
+                                <input 
+                                    type="text" 
+                                    id="postalCode" 
+                                    name="postalCode" 
+                                    class="form-control" 
+                                    value="<%= shippingAddress.postalCode || '' %>" 
+                                    required 
+                                />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="country" class="form-label">Country</label>
+                            <input 
+                                type="text" 
+                                id="country" 
+                                name="country" 
+                                class="form-control" 
+                                value="<%= shippingAddress.country || 'United States' %>" 
+                                required 
+                            />
+                        </div>
+
+                        <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 12px;">
+                            <input type="checkbox" id="saveToProfile" name="saveToProfile" checked />
+                            <label for="saveToProfile" style="font-size: 0.9rem; color: var(--gray-700); cursor: pointer;">
+                                Save this address to my profile for future orders
+                            </label>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; border-top: 1px solid var(--gray-200); padding-top: 20px;">
+                            <a href="/cart" style="color: var(--gray-600);">&larr; Back to Cart</a>
+                            <button type="submit" class="btn btn-primary" id="btn-continue-payment">
+                                Continue to Payment &rarr;
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

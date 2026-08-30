@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
+    <link rel="stylesheet" href="/css/auth.css" />
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="flash-container">
+                <%- include('../partials/messages') %>
+            </div>
+
+            <div class="admin-layout">
+                <!-- Sidebar -->
+                <aside class="admin-sidebar">
+                    <ul class="admin-menu">
+                        <li class="admin-menu-item"><a href="/admin" class="admin-menu-link">📊 Dashboard</a></li>
+                        <li class="admin-menu-item"><a href="/admin/products" class="admin-menu-link">📦 Products</a></li>
+                        <li class="admin-menu-item"><a href="/admin/categories" class="admin-menu-link active">📁 Categories</a></li>
+                        <li class="admin-menu-item"><a href="/admin/orders" class="admin-menu-link">🛍️ Orders</a></li>
+                        <li class="admin-menu-item"><a href="/admin/users" class="admin-menu-link">👥 Users</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Content -->
+                <div class="admin-main">
+                    <div class="card" style="max-width: 650px;">
+                        <h1 style="font-size: 1.5rem; margin-bottom: 24px; border-bottom: 1px solid var(--gray-200); padding-bottom: 12px;">
+                            <%= isEdit ? 'Edit Category' : 'Create Category' %>
+                        </h1>
+
+                        <form action="<%= isEdit ? `/admin/categories/${category._id}/update` : '/admin/categories' %>" method="POST">
+                            <div class="form-group">
+                                <label for="name" class="form-label">Category Name</label>
+                                <input 
+                                    type="text" 
+                                    id="name" 
+                                    name="name" 
+                                    class="form-control" 
+                                    value="<%= category.name || '' %>" 
+                                    placeholder="e.g. Electronics, Apparel, Home & Living"
+                                    required 
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description" class="form-label">Description (Optional)</label>
+                                <textarea 
+                                    name="description" 
+                                    id="description" 
+                                    rows="3" 
+                                    class="form-control" 
+                                    placeholder="Short description of this product category..."
+                                ><%= category.description || '' %></textarea>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 32px; border-top: 1px solid var(--gray-200); padding-top: 20px;">
+                                <a href="/admin/categories" style="color: var(--gray-600);">&larr; Back to Categories</a>
+                                <button type="submit" class="btn btn-primary" id="btn-save-category">
+                                    <%= isEdit ? 'Update Category' : 'Create Category' %>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

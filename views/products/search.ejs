@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/product.css" />
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="flash-container">
+                <%- include('../partials/messages') %>
+            </div>
+
+            <div style="margin-bottom: 28px;">
+                <h1>Search Results</h1>
+                <p style="color: var(--gray-500); font-size: 1rem;">
+                    Found <strong><%= totalProducts %></strong> matching items for "<strong><%= searchQuery %></strong>"
+                </p>
+            </div>
+
+            <!-- Product Grid -->
+            <% if (products && products.length > 0) { %>
+                <div class="product-grid">
+                    <% products.forEach(product => { %>
+                        <%- include('../partials/product-card', { product }) %>
+                    <% }) %>
+                </div>
+
+                <!-- Pagination -->
+                <% if (totalPages > 1) { %>
+                    <div class="pagination">
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <a 
+                                href="/products/search?q=<%= encodeURIComponent(searchQuery) %>&page=<%= i %>" 
+                                class="pagination-item <%= currentPage === i ? 'active' : '' %>"
+                            >
+                                <%= i %>
+                            </a>
+                        <% } %>
+                    </div>
+                <% } %>
+            <% } else { %>
+                <div class="card" style="text-align: center; padding: 48px;">
+                    <h3>No products matched your search</h3>
+                    <p style="color: var(--gray-500); margin: 12px 0 20px;">
+                        Try checking your spelling or searching for a different keyword.
+                    </p>
+                    <a href="/products" class="btn btn-primary">Browse All Products</a>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="flash-container">
+                <%- include('../partials/messages') %>
+            </div>
+
+            <div class="admin-layout">
+                <!-- Sidebar -->
+                <aside class="admin-sidebar">
+                    <ul class="admin-menu">
+                        <li class="admin-menu-item"><a href="/admin" class="admin-menu-link">📊 Dashboard</a></li>
+                        <li class="admin-menu-item"><a href="/admin/products" class="admin-menu-link">📦 Products</a></li>
+                        <li class="admin-menu-item"><a href="/admin/categories" class="admin-menu-link">📁 Categories</a></li>
+                        <li class="admin-menu-item"><a href="/admin/orders" class="admin-menu-link active">🛍️ Orders</a></li>
+                        <li class="admin-menu-item"><a href="/admin/users" class="admin-menu-link">👥 Users</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Content -->
+                <div class="admin-main">
+                    <div class="page-action-header">
+                        <h1 id="page-title">All Orders (<%= typeof totalOrders !== 'undefined' ? totalOrders : (typeof orders !== 'undefined' && orders ? orders.length : 0) %>)</h1>
+                    </div>
+
+                    <% if (orders && orders.length > 0) { %>
+                        <div class="card" style="padding: 0; overflow: hidden;">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Order #</th>
+                                            <th>Customer</th>
+                                            <th>Date</th>
+                                            <th>Total</th>
+                                            <th>Payment</th>
+                                            <th>Order Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% orders.forEach(order => { %>
+                                            <tr>
+                                                <td style="font-weight: 600;">#<%= order._id.toString().slice(-8).toUpperCase() %></td>
+                                                <td>
+                                                    <strong><%= order.user ? order.user.name : 'Unknown' %></strong>
+                                                    <div style="font-size: 0.8rem; color: var(--gray-500);"><%= order.user ? order.user.email : '' %></div>
+                                                </td>
+                                                <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                                                <td style="font-weight: 700; color: var(--primary);">₹<%= order.totalAmount.toFixed(2) %></td>
+                                                <td>
+                                                    <span class="status-pill status-<%= order.paymentStatus %>">
+                                                        <%= order.paymentStatus %>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="status-pill status-<%= order.orderStatus %>">
+                                                        <%= order.orderStatus %>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a href="/admin/orders/<%= order._id %>" class="btn btn-secondary btn-sm">Manage</a>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Pagination -->
+                        <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+                            <div class="pagination">
+                                <% for (let i = 1; i <= totalPages; i++) { %>
+                                    <a href="/admin/orders?page=<%= i %>" class="pagination-item <%= (typeof currentPage !== 'undefined' && currentPage === i) ? 'active' : '' %>">
+                                        <%= i %>
+                                    </a>
+                                <% } %>
+                            </div>
+                        <% } %>
+                    <% } else { %>
+                        <div class="card" style="text-align: center; padding: 48px;">
+                            <h3>No orders recorded yet</h3>
+                            <p style="color: var(--gray-500); margin-top: 12px;">Customer purchases will appear here in real-time.</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

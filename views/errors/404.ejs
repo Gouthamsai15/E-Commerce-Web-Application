@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - Page Not Found</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="card" style="max-width: 600px; margin: 40px auto; text-align: center; padding: 48px 24px;">
+                <div style="font-size: 4rem; font-weight: 800; color: var(--primary); margin-bottom: 8px;">404</div>
+                <h1 style="font-size: 1.75rem; margin-bottom: 12px;">Page Not Found</h1>
+                <p style="color: var(--gray-600); margin-bottom: 28px;">
+                    The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
+                </p>
+                <div style="display: flex; gap: 12px; justify-content: center;">
+                    <a href="/" class="btn btn-primary">Go to Homepage</a>
+                    <a href="/products" class="btn btn-secondary">Browse Catalog</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

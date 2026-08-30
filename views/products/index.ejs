@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/product.css" />
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="flash-container">
+                <%- include('../partials/messages') %>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <h1><%= currentCategory ? currentCategory.name : 'All Products' %></h1>
+                    <p style="color: var(--gray-500); font-size: 0.95rem;">Showing <%= products.length %> of <%= totalProducts %> items</p>
+                </div>
+
+                <!-- Filter / Sort Form -->
+                <form action="/products" method="GET" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;" id="product-filter-form">
+                    <% if (categorySlug) { %>
+                        <input type="hidden" name="category" value="<%= categorySlug %>" />
+                    <% } %>
+
+                    <select name="sort" class="form-control" style="width: auto; padding: 8px 12px;" onchange="this.form.submit()" id="sort-select">
+                        <option value="newest" <%= sortOption === 'newest' ? 'selected' : '' %>>Sort: Newest</option>
+                        <option value="price_asc" <%= sortOption === 'price_asc' ? 'selected' : '' %>>Price: Low to High</option>
+                        <option value="price_desc" <%= sortOption === 'price_desc' ? 'selected' : '' %>>Price: High to Low</option>
+                        <option value="rating" <%= sortOption === 'rating' ? 'selected' : '' %>>Top Rated</option>
+                        <option value="name" <%= sortOption === 'name' ? 'selected' : '' %>>Alphabetical (A-Z)</option>
+                    </select>
+                </form>
+            </div>
+
+            <!-- Categories Chips -->
+            <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 16px; margin-bottom: 24px;">
+                <a 
+                    href="/products" 
+                    class="btn <%= !categorySlug ? 'btn-primary' : 'btn-secondary' %> btn-sm"
+                    style="border-radius: 999px;"
+                >
+                    All
+                </a>
+                <% categories.forEach(cat => { %>
+                    <a 
+                        href="/products?category=<%= cat.slug || cat._id %>&sort=<%= sortOption %>" 
+                        class="btn <%= (categorySlug === cat.slug || categorySlug === cat._id.toString()) ? 'btn-primary' : 'btn-secondary' %> btn-sm"
+                        style="border-radius: 999px;"
+                    >
+                        <%= cat.name %>
+                    </a>
+                <% }) %>
+            </div>
+
+            <!-- Product Grid -->
+            <% if (products && products.length > 0) { %>
+                <div class="product-grid">
+                    <% products.forEach(product => { %>
+                        <%- include('../partials/product-card', { product }) %>
+                    <% }) %>
+                </div>
+
+                <!-- Pagination -->
+                <% if (totalPages > 1) { %>
+                    <div class="pagination">
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <a 
+                                href="/products?page=<%= i %>&category=<%= categorySlug %>&sort=<%= sortOption %>" 
+                                class="pagination-item <%= currentPage === i ? 'active' : '' %>"
+                            >
+                                <%= i %>
+                            </a>
+                        <% } %>
+                    </div>
+                <% } %>
+            <% } else { %>
+                <div class="card" style="text-align: center; padding: 48px;">
+                    <h3>No products found</h3>
+                    <p style="color: var(--gray-500); margin: 12px 0 20px;">Try clearing filters or search for another category.</p>
+                    <a href="/products" class="btn btn-primary">View All Products</a>
+                </div>
+            <% } %>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

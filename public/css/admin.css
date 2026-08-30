@@ -1,0 +1,87 @@
+/* Admin Dashboard & Management Styles */
+.admin-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 32px;
+    align-items: start;
+}
+
+.admin-sidebar {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: 20px 12px;
+}
+
+.admin-menu {
+    list-style: none;
+}
+
+.admin-menu-item {
+    margin-bottom: 4px;
+}
+
+.admin-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    color: var(--gray-700);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.admin-menu-link:hover,
+.admin-menu-link.active {
+    background-color: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.admin-main {
+    flex: 1;
+}
+
+/* Stat Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.stat-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--gray-900);
+}
+
+.page-action-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+    .admin-layout {
+        grid-template-columns: 1fr;
+    }
+}

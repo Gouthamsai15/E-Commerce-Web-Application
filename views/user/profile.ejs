@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="flash-container">
+                <%- include('../partials/messages') %>
+            </div>
+
+            <div style="max-width: 720px; margin: 0 auto;">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--gray-200); padding-bottom: 16px;">
+                        <div>
+                            <h1>User Profile</h1>
+                            <p style="color: var(--gray-500);">Manage your personal information and default shipping address</p>
+                        </div>
+                        <a href="/user/edit-profile" class="btn btn-secondary btn-sm" id="btn-edit-profile">Edit Profile</a>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                        <div>
+                            <span style="font-size: 0.85rem; color: var(--gray-500); font-weight: 600; text-transform: uppercase;">Full Name</span>
+                            <div style="font-size: 1.1rem; font-weight: 600; color: var(--gray-900);"><%= user.name %></div>
+                        </div>
+
+                        <div>
+                            <span style="font-size: 0.85rem; color: var(--gray-500); font-weight: 600; text-transform: uppercase;">Email Address</span>
+                            <div style="font-size: 1.1rem; font-weight: 600; color: var(--gray-900);"><%= user.email %></div>
+                        </div>
+
+                        <div>
+                            <span style="font-size: 0.85rem; color: var(--gray-500); font-weight: 600; text-transform: uppercase;">Account Role</span>
+                            <div style="font-size: 1.1rem; font-weight: 600; color: <%= user.role === 'admin' ? '#ea580c' : '#2563eb' %>;">
+                                <%= user.role ? user.role.toUpperCase() : 'USER' %>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span style="font-size: 0.85rem; color: var(--gray-500); font-weight: 600; text-transform: uppercase;">Phone Number</span>
+                            <div style="font-size: 1.1rem; font-weight: 600; color: var(--gray-900);"><%= user.phone || 'Not provided' %></div>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--gray-200); padding-top: 20px;">
+                        <h2 style="font-size: 1.15rem; margin-bottom: 12px;">Saved Shipping Address</h2>
+                        <% if (user.address && user.address.street) { %>
+                            <p style="font-size: 0.95rem; line-height: 1.6; color: var(--gray-700);">
+                                <%= user.address.street %><br />
+                                <%= user.address.city %>, <%= user.address.state %> <%= user.address.postalCode %><br />
+                                <%= user.address.country %>
+                            </p>
+                        <% } else { %>
+                            <p style="color: var(--gray-500); font-size: 0.9rem;">
+                                No default shipping address saved. You can add one by editing your profile.
+                            </p>
+                        <% } %>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px;">
+                    <a href="/orders" class="btn btn-secondary">View Order History</a>
+                    <% if (user.role === 'admin') { %>
+                        <a href="/admin" class="btn btn-primary">Go to Admin Dashboard</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

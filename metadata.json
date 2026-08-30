@@ -1,0 +1,6 @@
+{
+  "name": "E-Commerce Web Application",
+  "description": "A full-stack e-commerce web platform built with Node.js, Express, MongoDB Atlas, Mongoose, and EJS.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

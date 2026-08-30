@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/auth.css" />
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="flash-container">
+                <%- include('../partials/messages') %>
+            </div>
+
+            <!-- Checkout Steps -->
+            <div style="display: flex; justify-content: center; gap: 24px; margin-bottom: 32px; font-weight: 600;">
+                <span style="color: var(--gray-400);">✓ Shipping Address</span>
+                <span style="color: var(--gray-400);">&rarr;</span>
+                <span style="color: var(--primary);">② Payment Method</span>
+                <span style="color: var(--gray-400);">&rarr;</span>
+                <span style="color: var(--gray-400);">③ Confirmation</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 32px; align-items: start;">
+                <!-- Payment Options Form -->
+                <div class="card">
+                    <h1 style="font-size: 1.5rem; margin-bottom: 20px; border-bottom: 1px solid var(--gray-200); padding-bottom: 12px;">
+                        Select Payment Method
+                    </h1>
+
+                    <form action="/checkout/payment" method="POST" id="checkout-payment-form">
+                        <!-- Option 1: Cash on Delivery -->
+                        <div style="border: 1px solid var(--gray-300); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
+                            <input 
+                                type="radio" 
+                                id="payment-cod" 
+                                name="paymentMethod" 
+                                value="<%= paymentMethods.COD %>" 
+                                checked 
+                                onclick="toggleCardFields(false)" 
+                            />
+                            <label for="payment-cod" style="font-weight: 600; cursor: pointer; flex: 1;">
+                                <%= paymentMethods.COD %>
+                                <span style="display: block; font-weight: 400; font-size: 0.85rem; color: var(--gray-500);">
+                                    Pay with cash when your package is delivered to your doorstep.
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Option 2: Online Payment Simulation -->
+                        <div style="border: 1px solid var(--gray-300); border-radius: var(--radius-md); padding: 16px; margin-bottom: 24px;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                <input 
+                                    type="radio" 
+                                    id="payment-online" 
+                                    name="paymentMethod" 
+                                    value="<%= paymentMethods.ONLINE %>" 
+                                    onclick="toggleCardFields(true)" 
+                                />
+                                <label for="payment-online" style="font-weight: 600; cursor: pointer;">
+                                    <%= paymentMethods.ONLINE %>
+                                    <span style="display: block; font-weight: 400; font-size: 0.85rem; color: var(--gray-500);">
+                                        Simulated credit / debit card gateway.
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div id="card-fields-box" style="display: none; padding-top: 12px; border-top: 1px dashed var(--gray-200);">
+                                <div class="form-group">
+                                    <label class="form-label">Card Number</label>
+                                    <input type="text" name="cardNumber" class="form-control" placeholder="4532 •••• •••• 8899" />
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                                    <div class="form-group">
+                                        <label class="form-label">Exp Month</label>
+                                        <input type="text" name="expMonth" class="form-control" placeholder="MM" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Exp Year</label>
+                                        <input type="text" name="expYear" class="form-control" placeholder="YYYY" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">CVV</label>
+                                        <input type="text" name="cvv" class="form-control" placeholder="123" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block" style="padding: 14px; font-size: 1.05rem;" id="btn-place-order">
+                            Confirm & Place Order (₹<%= total.toFixed(2) %>)
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Order Review Box -->
+                <div class="card">
+                    <h2 style="font-size: 1.2rem; margin-bottom: 16px;">Ship To</h2>
+                    <p style="font-size: 0.9rem; color: var(--gray-700); line-height: 1.6; margin-bottom: 20px;">
+                        <strong><%= shippingAddress.fullName %></strong><br />
+                        <%= shippingAddress.street %><br />
+                        <%= shippingAddress.city %>, <%= shippingAddress.state %> <%= shippingAddress.postalCode %><br />
+                        <%= shippingAddress.country %><br />
+                        Phone: <%= shippingAddress.phone %>
+                    </p>
+
+                    <h2 style="font-size: 1.2rem; margin-bottom: 16px;">Items (<%= items.length %>)</h2>
+                    <div style="max-height: 200px; overflow-y: auto; margin-bottom: 16px;">
+                        <% items.forEach(item => { %>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px;">
+                                <span><%= item.product.name %> (x<%= item.quantity %>)</span>
+                                <strong>₹<%= (item.product.price * item.quantity).toFixed(2) %></strong>
+                            </div>
+                        <% }) %>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 800; border-top: 1px solid var(--gray-200); padding-top: 16px;">
+                        <span>Total to Pay:</span>
+                        <span style="color: var(--primary);">₹<%= total.toFixed(2) %></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleCardFields(show) {
+            document.getElementById('card-fields-box').style.display = show ? 'block' : 'none';
+        }
+    </script>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<div class="product-card" id="product-card-<%= product._id %>">
+    <div class="product-card-img-wrap">
+        <a href="/products/<%= product._id %>">
+            <img 
+                src="<%= (product.images && product.images.length > 0) ? product.images[0] : 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=80' %>" 
+                alt="<%= product.name %>" 
+                class="product-card-img"
+                loading="lazy"
+            />
+        </a>
+    </div>
+    <div class="product-card-body">
+        <span class="product-category-tag">
+            <%= product.category && product.category.name ? product.category.name : 'General' %>
+        </span>
+        <a href="/products/<%= product._id %>">
+            <h3 class="product-title"><%= product.name %></h3>
+        </a>
+        <div class="product-rating">
+            <span>★ <%= product.rating ? product.rating.toFixed(1) : '5.0' %></span>
+            <span class="review-count">(<%= product.numberOfReviews || 0 %>)</span>
+        </div>
+        <div class="product-price-row">
+            <span class="product-price">₹<%= product.price.toFixed(2) %></span>
+            <form action="/cart/add" method="POST" style="margin: 0;">
+                <input type="hidden" name="productId" value="<%= product._id %>" />
+                <input type="hidden" name="quantity" value="1" />
+                <button 
+                    type="submit" 
+                    class="btn btn-primary btn-sm" 
+                    id="btn-add-cart-<%= product._id %>"
+                    <%= product.stock <= 0 ? 'disabled' : '' %>
+                >
+                    <%= product.stock > 0 ? '+ Add' : 'Out of Stock' %>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
