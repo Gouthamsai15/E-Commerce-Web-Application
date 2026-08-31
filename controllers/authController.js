@@ -239,88 +239,7 @@ const logout_post = (req, res, next) => {
     }
 };
 
-// 4. FORGOT & RESET PASSWORD
-const forgot_password_get = (req, res) => {
-    res.render('auth/forgot-password', {
-        title: 'Forgot Password',
-        token: req.query.token || null
-    });
-};
-
-const forgot_password_post = async (req, res, next) => {
-    try {
-        const { email } = req.body;
-        const sanitizedEmail = sanitizeString(email).toLowerCase();
-
-        if (!sanitizedEmail || !isValidEmail(sanitizedEmail)) {
-            req.session.errorMessage = 'Please provide a valid email address.';
-            return res.redirect('/auth/forgot-password');
-        }
-
-        const user = await User.findOne({ email: sanitizedEmail });
-
-        if (user) {
-            const { resetToken, hashedToken } = generateResetToken();
-            user.passwordResetToken = hashedToken;
-            user.passwordResetExpires = Date.now() + 60 * 60 * 1000; // 1 hour
-            await user.save();
-
-            const resetUrl = `${req.protocol}://${req.get('host')}/auth/forgot-password?token=${resetToken}`;
-            await sendPasswordResetEmail(user.email, resetUrl);
-        }
-
-        // Always show the same generic message to avoid email enumeration security risk
-        req.session.successMessage = 'If an account matches that email, a password reset link has been sent.';
-        res.redirect('/auth/forgot-password');
-    } catch (err) {
-        next(err);
-    }
-};
-
-const reset_password_post = async (req, res, next) => {
-    try {
-        const { token, password, confirmPassword } = req.body;
-
-        if (!password || !confirmPassword || !token) {
-            req.session.errorMessage = 'All fields and token are required.';
-            return res.redirect(`/auth/forgot-password?token=${token}`);
-        }
-
-        if (password !== confirmPassword) {
-            req.session.errorMessage = 'Passwords do not match.';
-            return res.redirect(`/auth/forgot-password?token=${token}`);
-        }
-
-        if (!isValidPassword(password)) {
-            req.session.errorMessage = 'Password must be at least 6 characters.';
-            return res.redirect(`/auth/forgot-password?token=${token}`);
-        }
-
-        const hashedToken = hashToken(token);
-
-        const user = await User.findOne({
-            passwordResetToken: hashedToken,
-            passwordResetExpires: { $gt: Date.now() }
-        });
-
-        if (!user) {
-            req.session.errorMessage = 'Password reset token is invalid or has expired.';
-            return res.redirect('/auth/forgot-password');
-        }
-
-        user.password = await hashPassword(password);
-        user.passwordResetToken = undefined;
-        user.passwordResetExpires = undefined;
-        await user.save();
-
-        req.session.successMessage = 'Your password has been successfully reset! Please log in.';
-        res.redirect('/auth/login');
-    } catch (err) {
-        next(err);
-    }
-};
-
-// 5. USER PROFILE & EDIT PROFILE (Kept in authController to respect "no extra controller files" rule)
+// 4. USER PROFILE & EDIT PROFILE (Kept in authController to respect "no extra controller files" rule)
 const profile_get = async (req, res, next) => {
     try {
         const user = await User.findById(req.user._id).select('-password').lean();
@@ -379,9 +298,6 @@ module.exports = {
     login_get,
     login_post,
     logout_post,
-    forgot_password_get,
-    forgot_password_post,
-    reset_password_post,
     profile_get,
     edit_profile_get,
     edit_profile_post
