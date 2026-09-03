@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
-const upload = require('../middleware/uploadMiddleware');
 
 // Admin Dashboard
 router.get('/', adminController.dashboard_get);
