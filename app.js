@@ -26,25 +26,14 @@ app.use(
     })
 );
 
-// Request logger for development
 app.use(morgan('dev'));
 
-// ==========================================
-// 2. BODY & COOKIE PARSING MIDDLEWARE
-// ==========================================
-// Parse incoming form submissions (application/x-www-form-urlencoded)
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Parse incoming JSON data (application/json)
 app.use(express.json({ limit: '10mb' }));
 
-// Parse Cookie header and populate req.cookies
 app.use(cookieParser());
 
-// ==========================================
-// 3. SESSION CONFIGURATION
-// ==========================================
-// Configure session store: use MongoDB (connect-mongo) only if a valid connection string is present
 let sessionStore;
 const dbUrl = process.env.DBURL;
 const isPlaceholderDb = !dbUrl || 
@@ -57,7 +46,7 @@ if (!isPlaceholderDb) {
         sessionStore = MongoStore.create({
             mongoUrl: dbUrl,
             collectionName: 'sessions',
-            ttl: 14 * 24 * 60 * 60 // 14 days in seconds
+            ttl: 14 * 24 * 60 * 60
         });
         if (sessionStore && typeof sessionStore.on === 'function') {
             sessionStore.on('error', (err) => {
@@ -74,43 +63,29 @@ app.use(
         secret: process.env.SESSION_SECRET || 'modernshop_secure_session_key_987654321',
         resave: false,
         saveUninitialized: false,
-        store: sessionStore, // Falls back to MemoryStore in dev if store is undefined
+        store: sessionStore, 
         cookie: {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+            maxAge: 1000 * 60 * 60 * 24 * 7
         }
     })
 );
 
-// ==========================================
-// 4. STATIC FILES & VIEW ENGINE
-// ==========================================
-// Serve static assets from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Set EJS as the template rendering engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// ==========================================
-// 5. GLOBAL TEMPLATE VARIABLES & CONTEXT MIDDLEWARE
-// ==========================================
 const { loadUser } = require('./middleware/authMiddleware');
 const { userContext } = require('./middleware/userMiddleware');
 
-// Load user from database session into req.user & res.locals.user
 app.use(loadUser);
-// Inject user flash messages, cart count, and request state
 app.use(userContext);
 
-// Ensure uploads folder is accessible
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
-// ==========================================
-// 6. APPLICATION ROUTES
-// ==========================================
 const homeRoutes = require('./routes/homeRoutes');
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
@@ -123,7 +98,6 @@ const { protect } = require('./middleware/authMiddleware');
 const { adminOnly } = require('./middleware/adminMiddleware');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
-// Mount routes
 app.use('/', homeRoutes);
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
@@ -133,7 +107,6 @@ app.use('/orders', protect, orderRoutes);
 app.use('/user', protect, userRoutes);
 app.use('/admin', protect, adminOnly, adminRoutes);
 
-// Health check endpoint
 app.get('/health', (req, res) => {
     res.status(200).json({
         status: 'ok',
@@ -142,9 +115,6 @@ app.get('/health', (req, res) => {
     });
 });
 
-// ==========================================
-// 7. ERROR HANDLING MIDDLEWARE
-// ==========================================
 app.use(notFound);
 app.use(errorHandler);
 
