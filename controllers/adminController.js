@@ -139,7 +139,13 @@ const product_update_post = async (req, res, next) => {
         const { name, description, price, category, stock, imageUrl } = req.body;
 
         if (!isValidObjectId(id)) {
+            req.session.errorMessage = 'Invalid product ID.';
             return res.redirect('/admin/products');
+        }
+
+        if (!name || !description || !price || !category || stock === undefined) {
+            req.session.errorMessage = 'Please provide all required product fields.';
+            return res.redirect(`/admin/products/${id}/edit`);
         }
 
         const updateData = {
@@ -147,7 +153,7 @@ const product_update_post = async (req, res, next) => {
             description: sanitizeString(description),
             price: parseFloat(price),
             category,
-            stock: parseInt(stock)
+            stock: parseInt(stock, 10)
         };
 
         const cleanImageUrl = imageUrl ? imageUrl.trim() : '';
@@ -156,7 +162,7 @@ const product_update_post = async (req, res, next) => {
             updateData.images = [cleanImageUrl];
         }
 
-        await Product.findByIdAndUpdate(
+        const updatedProduct = await Product.findByIdAndUpdate(
             id,
             updateData,
             {
@@ -165,9 +171,16 @@ const product_update_post = async (req, res, next) => {
             }
         );
 
+        if (!updatedProduct) {
+            req.session.errorMessage = 'Product not found.';
+            return res.redirect('/admin/products');
+        }
+
         req.session.successMessage = 'Product updated successfully.';
-        res.redirect('/admin/products');
+        return res.redirect('/admin/products');
+
     } catch (err) {
+        console.error('❌ Product update error:', err);
         next(err);
     }
 };
