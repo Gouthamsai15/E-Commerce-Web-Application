@@ -1,28 +1,38 @@
 const mongoose = require('mongoose');
 
-// Disable query buffering so that operations fail fast when disconnected rather than hanging
 mongoose.set('bufferCommands', false);
 
-// Connect to MongoDB Atlas
+let connectionPromise = null;
+
 const connectDB = async () => {
+    if (mongoose.connection.readyState === 1) {
+        return mongoose.connection;
+    }
+
+    if (connectionPromise) {
+        return connectionPromise;
+    }
+
     const dbUrl = process.env.DBURL;
 
-    if (!dbUrl || dbUrl.includes('YOUR_USER') || dbUrl.includes('YOUR_MONGODB_ATLAS_CONNECTION_STRING') || dbUrl.includes('<username>') || dbUrl.includes('cluster0.mongodb.net')) {
-        console.warn('⚠️ [MongoDB Notice]: Running in fallback mode with sample catalog. To connect live Atlas DB, set DBURL in .env.');
-        return false;
+    if (!dbUrl) {
+        throw new Error('DBURL is not configured');
     }
 
-    try {
-        const conn = await mongoose.connect(dbUrl, {
-            serverSelectionTimeoutMS: 3000
-        });
-        console.log(`✅ MongoDB Atlas Connected: ${conn.connection.host}`);
-        return true;
-    } catch (err) {
-        console.warn(`⚠️ [MongoDB Connection Notice]: Could not connect to Atlas (${err.message}). Continuing with in-memory session/sample mode.`);
-        return false;
-    }
+    connectionPromise = mongoose.connect(dbUrl, {
+        serverSelectionTimeoutMS: 10000,
+    })
+    .then((conn) => {
+        console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+        return conn.connection;
+    })
+    .catch((err) => {
+        connectionPromise = null;
+        console.error(`❌ MongoDB Connection Failed: ${err.message}`);
+        throw err;
+    });
+
+    return connectionPromise;
 };
 
 module.exports = connectDB;
-

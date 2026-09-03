@@ -6,8 +6,18 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const helmet = require("helmet");
+const connectDB = require("./config/db");
 
 const app = express();
+
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        next(err);
+    }
+});
 
 // Trust proxy for reverse proxy environments (Cloud Run / AI Studio preview)
 app.set("trust proxy", 1);
