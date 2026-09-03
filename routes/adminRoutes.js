@@ -9,9 +9,9 @@ router.get('/', adminController.dashboard_get);
 // Product Management
 router.get('/products', adminController.products_get);
 router.get('/products/new', adminController.product_new_get);
-router.post('/products', upload.single('image'), adminController.product_create_post);
+router.post('/products',  adminController.product_create_post);
 router.get('/products/:id/edit', adminController.product_edit_get);
-router.post('/products/:id/update', upload.single('image'), adminController.product_update_post);
+router.post('/products/:id/update', adminController.product_update_post);
 router.post('/products/:id/delete', adminController.product_delete_post);
 
 // Category Management
