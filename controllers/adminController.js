@@ -87,17 +87,12 @@ const product_create_post = async (req, res, next) => {
             return res.redirect('/admin/products/new');
         }
 
-        const imagePaths = [];
         const cleanImageUrl = imageUrl ? imageUrl.trim() : '';
 
-        if (cleanImageUrl) {
-            imagePaths.push(cleanImageUrl);
-        } else if (req.file) {
-            imagePaths.push(`/uploads/${req.file.filename}`);
-        } else {
-            // Default placeholder if no image URL or file provided
-            imagePaths.push('https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80');
-        }
+        const imagePaths = [
+            cleanImageUrl ||
+            'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80'
+        ];
 
         await Product.create({
             name: sanitizeString(name),
@@ -143,7 +138,9 @@ const product_update_post = async (req, res, next) => {
         const { id } = req.params;
         const { name, description, price, category, stock, imageUrl } = req.body;
 
-        if (!isValidObjectId(id)) return res.redirect('/admin/products');
+        if (!isValidObjectId(id)) {
+            return res.redirect('/admin/products');
+        }
 
         const updateData = {
             name: sanitizeString(name),
@@ -154,13 +151,19 @@ const product_update_post = async (req, res, next) => {
         };
 
         const cleanImageUrl = imageUrl ? imageUrl.trim() : '';
+
         if (cleanImageUrl) {
             updateData.images = [cleanImageUrl];
-        } else if (req.file) {
-            updateData.images = [`/uploads/${req.file.filename}`];
         }
 
-        await Product.findByIdAndUpdate(id, updateData);
+        await Product.findByIdAndUpdate(
+            id,
+            updateData,
+            {
+                new: true,
+                runValidators: true
+            }
+        );
 
         req.session.successMessage = 'Product updated successfully.';
         res.redirect('/admin/products');
@@ -172,10 +175,20 @@ const product_update_post = async (req, res, next) => {
 const product_delete_post = async (req, res, next) => {
     try {
         const { id } = req.params;
-        if (isValidObjectId(id)) {
-            await Product.findByIdAndDelete(id);
-            req.session.successMessage = 'Product deleted successfully.';
+
+        if (!isValidObjectId(id)) {
+            req.session.errorMessage = 'Invalid product ID.';
+            return res.redirect('/admin/products');
         }
+
+        const product = await Product.findByIdAndDelete(id);
+
+        if (!product) {
+            req.session.errorMessage = 'Product not found.';
+            return res.redirect('/admin/products');
+        }
+
+        req.session.successMessage = 'Product deleted successfully.';
         res.redirect('/admin/products');
     } catch (err) {
         next(err);
